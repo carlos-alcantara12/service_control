@@ -26,6 +26,7 @@ O projeto usa SQLite por padrão para desenvolvimento. Para PostgreSQL, defina
 - `apps.orcamentos.Orcamento`: versões, itens e decisão vinculada à versão exata.
 - `apps.financeiro.Pagamento`, `Estorno` e `Cancelamento`: valores, identificadores de operação e tratamento financeiro.
 - `apps.auditoria.HistoricoAlteracao`: trilha de alterações sem exclusão em cascata.
+- `apps/*/serializers.py`: representação da API e entrada dos endpoints críticos.
 
 ## Serviços de negócio
 
@@ -39,6 +40,10 @@ As operações críticas ficam em serviços transacionais:
 Os serviços validam o perfil e o estado da ordem antes da operação, aplicam as
 transições permitidas e gravam a alteração junto com o histórico dentro da
 mesma transação.
+
+Os serializers de ações delegam a escrita aos serviços. Assim, endpoints como
+aprovação de orçamento, início de reparo, pagamento, estorno e entrega não
+alteram os modelos diretamente.
 
 As validações que dependem de agregações ou transições (por exemplo, autorização
 para iniciar reparo, transição de situação e registro transacional do histórico)
