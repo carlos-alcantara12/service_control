@@ -15,9 +15,5 @@ class Cliente(models.Model):
 
     class Meta:
         ordering = ["nome"]
-        indexes = [
-            models.Index(fields=["nome"]),
-            models.Index(fields=["documento"]),
-        ]
         verbose_name = "Cliente"
         verbose_name_plural = "Clientes"

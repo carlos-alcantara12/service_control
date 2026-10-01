@@ -27,6 +27,19 @@ O projeto usa SQLite por padrão para desenvolvimento. Para PostgreSQL, defina
 - `apps.financeiro.Pagamento`, `Estorno` e `Cancelamento`: valores, identificadores de operação e tratamento financeiro.
 - `apps.auditoria.HistoricoAlteracao`: trilha de alterações sem exclusão em cascata.
 
+## Serviços de negócio
+
+As operações críticas ficam em serviços transacionais:
+
+- `apps.ordens.services`: abertura, atribuição, diagnóstico, execução, testes, entrega e retorno.
+- `apps.orcamentos.services`: criação de versão, envio e decisão vinculada à versão exata.
+- `apps.financeiro.services`: pagamentos, estornos e cancelamentos.
+- `apps.auditoria.services`: snapshots e gravação do histórico.
+
+Os serviços validam o perfil e o estado da ordem antes da operação, aplicam as
+transições permitidas e gravam a alteração junto com o histórico dentro da
+mesma transação.
+
 As validações que dependem de agregações ou transições (por exemplo, autorização
 para iniciar reparo, transição de situação e registro transacional do histórico)
 devem ser expostas pelos serviços de negócio antes das rotas da API.
