@@ -1,0 +1,494 @@
+# ServiceFlow — Controle de Ordens de Serviço
+
+## Visão geral
+
+Sistema web para assistências técnicas registrarem e acompanharem equipamentos desde o recebimento até a entrega.
+
+O sistema centraliza clientes, equipamentos, defeitos, diagnósticos, orçamentos, autorizações, execução, pagamentos e histórico.
+
+Escopo inicial: uma assistência técnica de equipamentos eletrônicos.
+
+## 1. Coleta de requisitos
+
+### Problemas a resolver
+
+- Equipamentos recebidos sem identificação e registro das condições.
+- Defeitos, orçamentos e autorizações espalhados em mensagens.
+- Reparos iniciados sem aprovação do cliente.
+- Falta de acompanhamento dos responsáveis e prazos.
+- Confusão entre serviço concluído e pagamento quitado.
+- Ausência de histórico de alterações e entregas.
+
+### Público atendido
+
+- Assistências técnicas.
+- Oficinas de manutenção de equipamentos.
+- Empresas de reparação de eletrônicos.
+
+### Perfis de usuário
+
+| Perfil | Responsabilidades |
+|---|---|
+| Gerente | Gerenciar usuários, distribuir ordens, consultar relatórios e autorizar exceções. |
+| Atendente | Cadastrar clientes, receber equipamentos, registrar decisões, pagamentos e entregas. |
+| Técnico | Registrar diagnóstico, preparar orçamento, executar reparo e realizar testes. |
+
+### Requisitos funcionais
+
+| Código | Requisito |
+|---|---|
+| RF01 | Autenticar usuários e controlar permissões. |
+| RF02 | Cadastrar e consultar clientes. |
+| RF03 | Cadastrar equipamentos e consultar atendimentos anteriores. |
+| RF04 | Abrir ordens de serviço. |
+| RF05 | Atribuir técnicos e acompanhar prazos. |
+| RF06 | Registrar diagnósticos e atividades. |
+| RF07 | Criar orçamentos com serviços e peças. |
+| RF08 | Preservar versões e registrar aprovação ou recusa. |
+| RF09 | Controlar execução, peças utilizadas e testes. |
+| RF10 | Registrar pagamentos e estornos. |
+| RF11 | Registrar cancelamento e devolução. |
+| RF12 | Registrar entrega e emitir comprovante. |
+| RF13 | Anexar fotos e documentos. |
+| RF14 | Preservar histórico de alterações. |
+| RF15 | Consultar relatórios. |
+| RF16 | Abrir retorno vinculado a uma ordem anterior. |
+
+### Requisitos não funcionais
+
+- Interface responsiva.
+- Banco de dados relacional.
+- Permissões verificadas no backend.
+- Valores monetários armazenados como decimais.
+- Operações críticas executadas em transações.
+- Anexos protegidos por autenticação.
+- Backups automáticos e testes de restauração.
+- Paginação e filtros nas listagens.
+- Configurações separadas para desenvolvimento e produção.
+- Logs sem senhas ou dados sensíveis.
+
+### Políticas a confirmar com a empresa
+
+- Existe taxa de diagnóstico?
+- Quais formas de pagamento são aceitas?
+- Existe pagamento parcial ou parcelado?
+- Como tratar custos e pagamentos em cancelamentos?
+- Quais condições de garantia serão informadas?
+- Existe necessidade de estoque?
+- Quando poderá ocorrer entrega com pagamento pendente?
+
+## 2. Solução oferecida
+
+Uma aplicação web com uma ordem de serviço central para cada atendimento.
+
+### Módulos e telas
+
+| Módulo | Função |
+|---|---|
+| Login | Acesso dos funcionários. |
+| Painel | Ordens abertas, atrasadas, aguardando aprovação e prontas. |
+| Clientes | Cadastro, pesquisa e histórico. |
+| Equipamentos | Identificação e atendimentos anteriores. |
+| Ordens | Abertura, atribuição e acompanhamento. |
+| Orçamentos | Itens, valores, versões e decisões. |
+| Execução | Diagnóstico, atividades, peças e testes. |
+| Financeiro | Pagamentos, pendências e estornos. |
+| Entrega | Retirada e comprovante. |
+| Relatórios | Indicadores operacionais e financeiros. |
+| Usuários | Perfis, permissões e ativação. |
+| Histórico | Alterações e responsáveis. |
+
+### Abas dos detalhes da ordem
+
+- Resumo.
+- Recebimento.
+- Orçamento.
+- Execução.
+- Financeiro.
+- Anexos.
+- Histórico.
+
+### Exemplo de atendimento
+
+1. Atendente recebe o equipamento e registra suas condições.
+2. Gerente atribui um técnico.
+3. Técnico realiza diagnóstico e prepara orçamento.
+4. Atendente registra aprovação ou recusa do cliente.
+5. Técnico executa o reparo autorizado.
+6. Técnico registra os testes.
+7. Atendente registra pagamento e entrega.
+
+No MVP, a comunicação com o cliente ocorrerá pelos canais existentes da empresa. O sistema armazenará o registro e a evidência da decisão.
+
+## 3. Regras de negócio
+
+### Recebimento
+
+1. Cada ordem terá número único, automático e imutável.
+2. Cliente, equipamento, defeito e condições de entrada serão obrigatórios.
+3. Data e atendente serão registrados automaticamente.
+4. Acessórios e condições de entrada pertencerão à ordem.
+5. Um equipamento poderá possuir várias ordens.
+6. Retornos gerarão novas ordens vinculadas às anteriores.
+
+### Orçamento
+
+7. O diagnóstico deverá ser registrado antes do envio.
+8. O orçamento deverá possuir pelo menos um item para envio.
+9. Quantidades serão positivas e preços não negativos.
+10. O total será calculado no backend.
+11. Versões enviadas serão preservadas.
+12. Alterações de preço ou escopo gerarão nova versão.
+13. A aprovação será vinculada à versão exata.
+14. A decisão registrará data, canal, autorizador e funcionário.
+15. Orçamento expirado exigirá nova versão revalidada.
+16. Reparo somente começará com aprovação válida.
+17. Preços históricos não serão alterados por mudanças no catálogo.
+
+### Execução
+
+18. O técnico responsável deverá estar ativo.
+19. Somente usuários autorizados poderão atualizar a ordem.
+20. Mudanças de situação seguirão transições permitidas.
+21. Alterações de prazo exigirão justificativa.
+22. Atraso será calculado pelo prazo e pela situação.
+23. Conclusão exigirá testes e resultado registrados.
+24. Devolução sem reparo exigirá motivo.
+25. Mudança de escopo durante o reparo exigirá nova autorização antes da execução afetada.
+
+### Financeiro e entrega
+
+26. Situação financeira será independente da situação operacional.
+27. Pagamentos confirmados reduzirão o saldo pendente.
+28. Estornos preservarão o pagamento original.
+29. Cancelamento não apagará custos, pagamentos ou atividades.
+30. O tratamento financeiro do cancelamento será registrado.
+31. Entrega exigirá quitação, salvo exceção autorizada pelo gerente.
+32. Entrega registrará data, funcionário e recebedor.
+33. Ordens com histórico não serão excluídas pela interface.
+34. Alterações críticas e histórico serão gravados na mesma transação.
+
+### Permissões
+
+| Operação | Gerente | Atendente | Técnico |
+|---|---|---|---|
+| Clientes e equipamentos | Gerenciar | Gerenciar | Consultar vinculados |
+| Abrir ordens | Sim | Sim | Não |
+| Atribuir técnico | Sim | Não | Não |
+| Diagnóstico e execução | Sim | Não | Ordens atribuídas |
+| Preparar orçamento | Sim | Não | Ordens atribuídas |
+| Registrar decisão | Sim | Sim | Não |
+| Pagamento e entrega | Sim | Sim | Não |
+| Autorizar estorno | Sim | Não | Não |
+| Relatórios financeiros | Sim | Não | Não |
+| Gerenciar usuários | Sim | Não | Não |
+
+## 4. Controle de riscos
+
+| Risco | Controle |
+|---|---|
+| Troca de equipamentos | Etiqueta com número da ordem e conferência na retirada. |
+| Discussão sobre danos | Checklist e fotos de entrada. |
+| Reparo sem autorização | Bloqueio no backend. |
+| Alteração indevida de preços | Versões preservadas e histórico. |
+| Prazos esquecidos | Painel de atrasos e alertas. |
+| Alterações simultâneas | Controle de versão e bloqueios transacionais. |
+| Pagamento duplicado | Identificador único de operação. |
+| Perda de dados | Backup de banco e anexos. |
+| Acesso indevido | Permissões por perfil e ordem. |
+| Arquivos inadequados | Validação de tipo e tamanho. |
+| Exposição de informações | Coleta mínima e acesso restrito. |
+
+Senhas dos equipamentos não deverão ser registradas em observações gerais. Se forem necessárias, a empresa deverá definir procedimento específico de autorização e proteção.
+
+## 5. Modelagem
+
+Legenda:
+
+- PK: chave primária.
+- FK: chave estrangeira.
+- ?: campo opcional.
+
+### Entidades
+
+| Entidade | Campos |
+|---|---|
+| Cliente | id PK, nome, telefone, email?, documento?, endereço?, criado_em, ativo |
+| Equipamento | id PK, cliente FK, categoria, marca, modelo, número_série?, criado_em |
+| Usuário | id PK, nome, login único, senha_hash, perfil, ativo |
+| OrdemServico | id PK, número único, cliente FK, equipamento FK, atendente FK, técnico FK?, ordem_original FK?, defeito_relatado, condições_entrada, acessórios?, diagnóstico?, situação, prioridade, entrada_em, previsão_entrega?, conclusão_em?, versão_registro |
+| Orcamento | id PK, ordem FK, criador FK, versão, situação, criado_em, enviado_em?, válido_até, observações? |
+| ItemOrcamento | id PK, orçamento FK, tipo, descrição, quantidade, valor_unitário |
+| DecisaoOrcamento | id PK, orçamento FK único, registrado_por FK, decisão, data, canal, nome_autorizador, evidência? |
+| AtividadeServico | id PK, ordem FK, técnico FK, tipo, descrição, registrado_em, resultado? |
+| PecaUtilizada | id PK, ordem FK, registrado_por FK, descrição, quantidade, custo_unitário, utilizada_em |
+| Pagamento | id PK, ordem FK, registrado_por FK, valor, forma, situação, pago_em, referência?, identificador_operação único |
+| Estorno | id PK, pagamento FK, autorizado_por FK, valor, motivo, registrado_em |
+| Cancelamento | id PK, ordem FK único, responsável FK, motivo, tratamento_financeiro, registrado_em |
+| Entrega | id PK, ordem FK único, funcionário FK, recebedor, identificação?, entregue_em, comprovante?, observações?, autorização_exceção? |
+| Anexo | id PK, ordem FK, enviado_por FK, nome, caminho, tipo, tamanho, categoria, enviado_em |
+| HistoricoAlteracao | id PK, ordem FK, usuário FK, ação, dados_anteriores?, dados_novos?, justificativa?, registrado_em |
+
+O usuário utilizará a autenticação do Django. Evidências e comprovantes poderão referenciar anexos protegidos.
+
+### Relacionamentos
+
+| Origem | Destino | Cardinalidade |
+|---|---|---|
+| Cliente | Equipamento | 1:N |
+| Cliente | OrdemServico | 1:N |
+| Equipamento | OrdemServico | 1:N |
+| Usuário | OrdemServico | 1:N por papel |
+| Ordem original | Ordem de retorno | 1:N |
+| OrdemServico | Orcamento | 1:N |
+| Orcamento | ItemOrcamento | 1:N |
+| Orcamento | DecisaoOrcamento | 1:0..1 |
+| OrdemServico | AtividadeServico | 1:N |
+| OrdemServico | PecaUtilizada | 1:N |
+| OrdemServico | Pagamento | 1:N |
+| Pagamento | Estorno | 1:N |
+| OrdemServico | Cancelamento | 1:0..1 |
+| OrdemServico | Entrega | 1:0..1 |
+| OrdemServico | Anexo | 1:N |
+| OrdemServico | HistoricoAlteracao | 1:N |
+
+O lado N poderá começar sem registros. O orçamento precisará de pelo menos um item para envio.
+
+### Restrições
+
+- Ordem e versão do orçamento formarão uma combinação única.
+- Uma decisão por versão do orçamento.
+- Uma entrega por ordem.
+- Quantidades e pagamentos maiores que zero.
+- Preços e custos não negativos.
+- Soma dos estornos limitada ao pagamento.
+- Cliente e equipamento coerentes no recebimento.
+- Exclusões não poderão apagar histórico em cascata.
+- Troca posterior do proprietário não modificará ordens anteriores.
+
+### Índices
+
+- Número da ordem.
+- Situação e previsão de entrega.
+- Técnico e situação.
+- Cliente e data de entrada.
+- Equipamento e data de entrada.
+- Situação e validade do orçamento.
+- Data e situação do pagamento.
+
+## 6. Diagramação
+
+### Arquitetura técnica
+
+```mermaid
+flowchart TD
+    A["Navegador: HTML, CSS e JavaScript"] --> B["Servidor web: HTTPS"]
+    B --> C["Django e API REST"]
+    C --> D["Serviços e regras de negócio"]
+    D --> E["PostgreSQL"]
+    C --> F["Anexos protegidos"]
+    G["Rotinas agendadas"] --> D
+    G --> H["Backups e alertas"]
+```
+
+### Diagrama entidade-relacionamento
+
+```mermaid
+erDiagram
+    CLIENTE ||--o{ EQUIPAMENTO : possui
+    CLIENTE ||--o{ ORDEM_SERVICO : solicita
+    EQUIPAMENTO ||--o{ ORDEM_SERVICO : recebe
+    USUARIO ||--o{ ORDEM_SERVICO : atende
+    ORDEM_SERVICO o|--o{ ORDEM_SERVICO : origina_retornos
+    ORDEM_SERVICO ||--o{ ORCAMENTO : possui
+    ORCAMENTO ||--o{ ITEM_ORCAMENTO : contem
+    ORCAMENTO ||--o| DECISAO_ORCAMENTO : recebe
+    ORDEM_SERVICO ||--o{ ATIVIDADE_SERVICO : registra
+    ORDEM_SERVICO ||--o{ PECA_UTILIZADA : utiliza
+    ORDEM_SERVICO ||--o{ PAGAMENTO : recebe
+    PAGAMENTO ||--o{ ESTORNO : possui
+    ORDEM_SERVICO ||--o| CANCELAMENTO : registra
+    ORDEM_SERVICO ||--o| ENTREGA : registra
+    ORDEM_SERVICO ||--o{ ANEXO : possui
+    ORDEM_SERVICO ||--o{ HISTORICO_ALTERACAO : preserva
+```
+
+### Fluxo operacional
+
+```mermaid
+flowchart TD
+    A["Recebida"] --> B["Em diagnóstico"]
+    B --> C["Aguardando aprovação"]
+    C -->|Aprovado| D["Em reparo"]
+    C -->|Recusado ou expirado| E["Preparar devolução"]
+    D -->|Falta de peça| F["Aguardando peça"]
+    F --> D
+    D --> G["Em testes"]
+    G -->|Falhou| D
+    G -->|Aprovado| H["Pronta para entrega"]
+    E --> H
+    H --> I["Entregue"]
+```
+
+Cancelamento será registrado separadamente. Equipamentos presentes na empresa ainda deverão passar pela devolução e entrega.
+
+## 7. Plano de ação
+
+| Etapa | Entrega | Critério de conclusão |
+|---|---|---|
+| 1. Requisitos | Regras e escopo | Políticas pendentes confirmadas. |
+| 2. Interface | Protótipo | Atendimento completo representado. |
+| 3. Base técnica | Banco, login e perfis | Permissões funcionando. |
+| 4. Recebimento | Clientes, equipamentos e ordens | Entrada completa registrada. |
+| 5. Orçamento | Itens, versões e decisão | Reparo bloqueado sem aprovação. |
+| 6. Execução | Atividades, peças e testes | Serviço acompanhado até conclusão. |
+| 7. Encerramento | Financeiro, cancelamento e entrega | Histórico preservado. |
+| 8. Relatórios | Indicadores e filtros | Resultados conferidos. |
+| 9. Validação | Testes e restauração | Fluxos críticos verificados. |
+| 10. Implantação | Produção e piloto | Equipe executa atendimentos reais. |
+
+## 8. Desenvolvimento
+
+### Tecnologias
+
+| Camada | Tecnologia |
+|---|---|
+| Backend | Python, Django e Django REST Framework |
+| Frontend |  HTML, CSS e JavaScript |
+| Banco | PostgreSQL |
+| Autenticação | Sessões Django |
+| Servidor de aplicação | Gunicorn |
+| Proxy e HTTPS | Nginx |
+| Rotinas | Comandos Django por agendador |
+| Testes | Ferramentas de teste do Django |
+
+Frontend e API no mesmo domínio. Cookies protegidos e proteção CSRF para escrita. Segredos em variáveis de ambiente e DEBUG desativado em produção.
+
+### Organização do projeto
+
+- config/: configurações, URLs e inicialização.
+- apps/usuarios/: autenticação e permissões.
+- apps/clientes/: cadastro de clientes.
+- apps/equipamentos/: cadastro e histórico dos equipamentos.
+- apps/ordens/: recebimento, execução, anexos e entrega.
+- apps/orcamentos/: propostas, versões e decisões.
+- apps/financeiro/: pagamentos e estornos.
+- apps/auditoria/: histórico.
+- apps/relatorios/: indicadores.
+- templates/: páginas HTML.
+- static/: CSS, JavaScript e imagens.
+- docs/: documentação.
+
+### Arquivos por aplicação
+
+| Arquivo | Responsabilidade |
+|---|---|
+| models.py | Entidades e restrições. |
+| serializers.py | Validação e representação da API. |
+| views.py | Requisições e respostas. |
+| services.py | Regras e operações de negócio. |
+| selectors.py | Consultas e filtros. |
+| permissions.py | Autorizações. |
+| urls.py | Rotas. |
+| tests/ | Testes. |
+| migrations/ | Evolução do banco. |
+
+### Serviços de negócio
+
+- abrir_ordem()
+- atribuir_tecnico()
+- registrar_diagnostico()
+- criar_orcamento()
+- enviar_orcamento()
+- registrar_decisao_orcamento()
+- iniciar_reparo()
+- registrar_peca_utilizada()
+- alterar_prazo()
+- concluir_testes()
+- registrar_pagamento()
+- registrar_estorno()
+- cancelar_ordem()
+- registrar_entrega()
+- abrir_retorno()
+
+Cada serviço validará usuário, situação e dados obrigatórios. Alteração e histórico serão gravados na mesma transação.
+
+### API principal
+
+| Método | Rota | Finalidade |
+|---|---|---|
+| GET/POST | /api/clientes/ | Listar e cadastrar. |
+| GET/PATCH | /api/clientes/{id}/ | Consultar e atualizar. |
+| GET/POST | /api/equipamentos/ | Listar e cadastrar. |
+| GET/POST | /api/ordens/ | Listar e abrir. |
+| GET | /api/ordens/{id}/ | Consultar detalhes. |
+| POST | /api/ordens/{id}/atribuir-tecnico/ | Definir responsável. |
+| POST | /api/ordens/{id}/diagnostico/ | Registrar diagnóstico. |
+| POST | /api/ordens/{id}/alterar-prazo/ | Alterar prazo com motivo. |
+| POST | /api/ordens/{id}/iniciar-reparo/ | Validar autorização e iniciar. |
+| POST | /api/ordens/{id}/atividades/ | Registrar atividade. |
+| POST | /api/ordens/{id}/pecas/ | Registrar peças utilizadas. |
+| POST | /api/ordens/{id}/concluir-testes/ | Registrar resultado. |
+| POST | /api/ordens/{id}/orcamentos/ | Criar versão. |
+| POST | /api/orcamentos/{id}/enviar/ | Enviar proposta. |
+| POST | /api/orcamentos/{id}/decisao/ | Registrar decisão. |
+| POST | /api/ordens/{id}/pagamentos/ | Registrar recebimento. |
+| POST | /api/pagamentos/{id}/estornos/ | Registrar estorno. |
+| POST | /api/ordens/{id}/cancelamento/ | Cancelar e tratar financeiro. |
+| POST | /api/ordens/{id}/entrega/ | Registrar retirada. |
+| POST | /api/ordens/{id}/retornos/ | Abrir retorno. |
+| GET/POST | /api/ordens/{id}/anexos/ | Consultar e enviar arquivos. |
+| GET | /api/ordens/{id}/historico/ | Consultar histórico. |
+| GET | /api/relatorios/operacional/ | Indicadores operacionais. |
+| GET | /api/relatorios/financeiro/ | Indicadores financeiros. |
+
+Operações críticas terão rotas próprias, sem alteração livre por atualização genérica.
+
+### Indicadores
+
+- Ordens abertas por situação.
+- Ordens atrasadas.
+- Tempo médio de atendimento.
+- Serviços concluídos por técnico.
+- Orçamentos aprovados e recusados.
+- Valor aprovado.
+- Valor recebido.
+- Saldo pendente.
+- Equipamentos aguardando retirada.
+- Retornos relacionados a atendimentos anteriores.
+
+### Testes essenciais
+
+- Bloquear reparo sem aprovação.
+- Exigir nova autorização após mudança de orçamento.
+- Restringir operações por perfil e ordem.
+- Impedir transições inválidas.
+- Evitar pagamentos e entregas duplicados.
+- Preservar histórico no cancelamento.
+- Impedir estorno superior ao pagamento.
+- Validar entrega com pendência.
+- Evitar sobrescrita por alterações simultâneas.
+- Restaurar banco e anexos de backup.
+
+### Implantação
+
+1. Configurar produção e variáveis de ambiente.
+2. Executar migrações e cadastrar gerente.
+3. Configurar HTTPS e anexos privados.
+4. Agendar backups e alertas.
+5. Verificar permissões e fluxo completo.
+6. Testar restauração.
+7. Iniciar piloto com a equipe.
+
+### Escopo do MVP
+
+Login, clientes, equipamentos, ordens, orçamento versionado, aprovação, execução, pagamentos, estornos, cancelamento, entrega, anexos e histórico.
+
+### Evoluções posteriores
+
+- Portal do cliente.
+- Notificações automáticas.
+- Estoque completo.
+- Integração de pagamentos.
+- Emissão fiscal.
+- Gestão de múltiplas unidades.
