@@ -1,4 +1,4 @@
-import { bindShell, api, escapeHtml, formatNumber, formatDate, formatDateTime, formatMoney, handleAuthError, icon, state, statusTag, unwrap } from "/static/shared/core.js";
+import { bindShell, api, escapeHtml, formatNumber, formatDate, formatDateTime, formatMoney, handleAuthError, icon, state, statusTag, unwrap } from "../shared/core.js";
 
 const root = document.querySelector("[data-screen-slot]");
 bindShell();
@@ -34,7 +34,7 @@ function updatePagination(view, count, loaded) {
 
 function showEmpty(message){const empty=root.querySelector("[data-empty-state]");root.querySelector("[data-table-wrap]").hidden=true;empty.classList.remove("hidden");empty.innerHTML=`<span class="icon-wrap">${icon("info")}</span><p>${escapeHtml(message)}</p>`;root.querySelector("[data-pagination]").innerHTML="";}
 
-function bind(element){if(element.dataset.bound==="true")return;element.dataset.bound="true";element.addEventListener("submit",(event)=>{if(!event.target.matches("[data-collection-search]"))return;event.preventDefault();state.search.orcamentos=new FormData(event.target).get("q")||"";render();});element.addEventListener("change",(event)=>{if(event.target.matches("[data-budget-filter]")){state.filters.orcamentos=event.target.value;render();}});element.addEventListener("click",async(event)=>{const action=event.target.closest("[data-action]");if(action?.dataset.action==="order-detail")(await import("/static/screens/ordens/script.js")).openOrderDetail(action.dataset.id);if(action?.dataset.action==="refresh-screen")render();if(action?.dataset.action==="page"&&action.dataset.url)render({pageUrl:action.dataset.url});});}
+function bind(element){if(element.dataset.bound==="true")return;element.dataset.bound="true";element.addEventListener("submit",(event)=>{if(!event.target.matches("[data-collection-search]"))return;event.preventDefault();state.search.orcamentos=new FormData(event.target).get("q")||"";render();});element.addEventListener("change",(event)=>{if(event.target.matches("[data-budget-filter]")){state.filters.orcamentos=event.target.value;render();}});element.addEventListener("click",async(event)=>{const action=event.target.closest("[data-action]");if(action?.dataset.action==="order-detail")(await import("../ordens/script.js")).openOrderDetail(action.dataset.id);if(action?.dataset.action==="refresh-screen")render();if(action?.dataset.action==="page"&&action.dataset.url)render({pageUrl:action.dataset.url});});}
 
 render();
 

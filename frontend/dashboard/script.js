@@ -1,4 +1,4 @@
-import { bindShell, api, escapeHtml, formatDate, formatMoney, formatNumber, handleAuthError, icon, state, statusTag } from "/static/shared/core.js";
+import { bindShell, api, escapeHtml, formatDate, formatMoney, formatNumber, handleAuthError, icon, state, statusTag } from "../shared/core.js";
 
 const root = document.querySelector("[data-screen-slot]");
 bindShell();
@@ -64,8 +64,8 @@ function bind(element) {
   element.dataset.bound = "true";
   element.addEventListener("click", async (event) => {
     const action = event.target.closest("[data-action]");
-    if (action?.dataset.action === "new-order") return (await import("/static/screens/ordens/script.js")).openCreateModal("ordem");
-    if (action?.dataset.action === "order-detail") return (await import("/static/screens/ordens/script.js")).openOrderDetail(action.dataset.id);
+    if (action?.dataset.action === "new-order") return (await import("../ordens/script.js")).openCreateModal("ordem");
+    if (action?.dataset.action === "order-detail") return (await import("../ordens/script.js")).openOrderDetail(action.dataset.id);
   });
 }
 

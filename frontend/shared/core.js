@@ -37,7 +37,7 @@ const icons = {
   dollar: '<circle cx="12" cy="12" r="9"/><path d="M15 8.5c-.7-.6-1.7-1-3-1-1.7 0-3 .8-3 2s1.2 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.4-3-1M12 5v14"/>',
 };
 
-export const API_BASE = window.SERVICEFLOW_API_BASE || "/api";
+export const API_BASE = window.SERVICEFLOW_API_BASE || "http://127.0.0.1:8000/api";
 export function icon(name, className = "") { return `<span class="icon ${className}" aria-hidden="true"><svg viewBox="0 0 24 24">${icons[name] || icons.info}</svg></span>`; }
 export function readUser() { try { return JSON.parse(localStorage.getItem(storageKey) || "null"); } catch (_) { return null; } }
 export function saveUser(user) { state.user = user; localStorage.setItem(storageKey, JSON.stringify(user)); }
@@ -91,19 +91,19 @@ export function bindShell() {
     if (action.dataset.action === "close-modal") { closeModal(); return; }
     if (action.dataset.action === "logout") {
       try { await api("/logout/", { method: "POST" }); } catch (_) { /* a sessão local também deve ser encerrada */ }
-      clearUser(); window.location.href = "/login/";
+      clearUser(); window.location.href = "../login/";
     }
   });
   document.getElementById("global-search-form")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const query = new FormData(event.currentTarget).get("q") || "";
-    window.location.href = `/ordens/${query ? `?q=${encodeURIComponent(query)}` : ""}`;
+    window.location.href = `../ordens/${query ? `?q=${encodeURIComponent(query)}` : ""}`;
   });
 }
 
 export function showToast(message, type = "info") { let stack = document.getElementById("toast-stack"); if (!stack) { stack = document.createElement("div"); stack.id = "toast-stack"; stack.className = "toast-stack"; document.body.appendChild(stack); } const toast = document.createElement("div"); toast.className = `toast ${type}`; toast.innerHTML = `${icon(type === "error" ? "alertCircle" : type === "success" ? "check" : "info")}<span>${escapeHtml(message)}</span>`; stack.appendChild(toast); window.setTimeout(() => toast.remove(), 4200); }
 export function openModal(title, description, body, footer = "", wide = false) { closeModal(); const wrapper = document.createElement("div"); wrapper.className = "modal-backdrop"; wrapper.id = "modal-backdrop"; wrapper.innerHTML = `<section class="modal ${wide ? "modal-wide" : ""}" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-header"><div><h2 class="modal-title" id="modal-title">${escapeHtml(title)}</h2>${description ? `<p class="modal-description">${escapeHtml(description)}</p>` : ""}</div><button class="close-button" data-action="close-modal" aria-label="Fechar">${icon("x")}</button></div><div class="modal-body">${body}</div>${footer ? `<div class="modal-footer">${footer}</div>` : ""}</section>`; document.body.appendChild(wrapper); wrapper.addEventListener("click", (event) => { if (event.target === wrapper) closeModal(); }); wrapper.querySelector("input, select, textarea, button")?.focus(); }
 export function closeModal() { document.getElementById("modal-backdrop")?.remove(); }
-export function handleAuthError(error) { if (error?.status === 401 || error?.status === 403) { clearUser(); window.location.href = "/login/"; return true; } return false; }
+export function handleAuthError(error) { if (error?.status === 401 || error?.status === 403) { clearUser(); window.location.href = "../login/"; return true; } return false; }
 
 

@@ -1,4 +1,4 @@
-import { bindShell, api, escapeHtml, formatMoney, formatNumber, handleAuthError, icon, statusTag } from "/static/shared/core.js";
+import { bindShell, api, escapeHtml, formatMoney, formatNumber, handleAuthError, icon, statusTag } from "../shared/core.js";
 
 const root = document.querySelector("[data-screen-slot]");
 bindShell();
