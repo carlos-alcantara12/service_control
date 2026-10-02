@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#20242A"><title>Relatórios · ServiceFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/screens/relatorios/styles.css">
+  <script type="module" src="/static/screens/relatorios/script.js?v=2"></script>
+</head>
+<body>
+  <div id="app" class="app-root"><div class="app-shell">
+    <aside class="sidebar" aria-label="Navegação principal">
+      <div class="sidebar-brand"><span class="brand-mark">SF</span><span class="sidebar-brand-name">ServiceFlow<small>gestão de serviços</small></span></div>
+      <div class="nav-section-label">Operação</div><nav class="sidebar-nav"><a class="nav-link " href="/dashboard/" aria-current="false"><span class="nav-glyph" aria-hidden="true">▦</span><span class="nav-link-label">Visão geral</span></a><a class="nav-link " href="/ordens/" aria-current="false"><span class="nav-glyph" aria-hidden="true">▤</span><span class="nav-link-label">Ordens de serviço</span></a><a class="nav-link " href="/clientes/" aria-current="false"><span class="nav-glyph" aria-hidden="true">♙</span><span class="nav-link-label">Clientes</span></a><a class="nav-link " href="/equipamentos/" aria-current="false"><span class="nav-glyph" aria-hidden="true">▣</span><span class="nav-link-label">Equipamentos</span></a><a class="nav-link " href="/orcamentos/" aria-current="false"><span class="nav-glyph" aria-hidden="true">▤</span><span class="nav-link-label">Orçamentos</span></a><a class="nav-link " href="/financeiro/" aria-current="false"><span class="nav-glyph" aria-hidden="true">◈</span><span class="nav-link-label">Financeiro</span></a><a class="nav-link active" href="/relatorios/" aria-current="page"><span class="nav-glyph" aria-hidden="true">⌁</span><span class="nav-link-label">Relatórios</span></a><a class="nav-link " data-admin-only href="/usuarios/" aria-current="false"><span class="nav-glyph" aria-hidden="true">⚙</span><span class="nav-link-label">Usuários</span></a></nav>
+      <div class="sidebar-spacer"></div><div class="sidebar-footer"><div class="sidebar-user"><span class="avatar" id="sidebar-avatar">SF</span><div class="sidebar-user-text"><div class="sidebar-user-name" id="sidebar-name">Usuário</div><div class="sidebar-user-role" id="sidebar-role">Equipe</div></div><button class="sidebar-user-menu" data-action="logout" aria-label="Sair">Sair</button></div></div>
+    </aside>
+    <div class="main-column"><header class="topbar"><button class="mobile-menu" data-action="toggle-nav" aria-label="Abrir menu">Menu</button><div class="breadcrumb"><span>Workspace</span><span>›</span><span class="current">Relatórios</span></div><div class="topbar-actions"><form class="search-box" id="global-search-form"><label class="hidden" for="global-search">Buscar</label><input id="global-search" name="q" placeholder="Buscar no sistema"></form><button class="icon-button notification-button" data-action="notifications" aria-label="Notificações">Avisos</button><div class="topbar-divider"></div><div class="topbar-profile"><span class="avatar" id="top-avatar">SF</span><div class="topbar-profile-text"><div class="topbar-profile-name" id="top-name">Usuário</div><div class="topbar-profile-role" id="top-role">Equipe</div></div></div></div></header>
+      <main id="content"><section class="screen-frame screen-relatorios" data-screen="relatorios" data-screen-slot><div class="page">
+  <div class="page-heading"><div><p class="eyebrow">Análises</p><h1 class="page-title">Relatórios</h1><p class="page-description">Indicadores consolidados para orientar decisões e prioridades.</p></div></div>
+  <div class="report-grid" data-operational-cards><article class="report-card"><div class="report-card-label">Ordens atrasadas</div><div class="report-card-value" data-report="overdue">—</div><div class="report-card-note">Itens fora da previsão de entrega</div></article><article class="report-card"><div class="report-card-label">Tempo médio</div><div class="report-card-value" data-report="average">—</div><div class="report-card-note">Entre entrada e conclusão</div></article><article class="report-card"><div class="report-card-label">Aguardando retirada</div><div class="report-card-value" data-report="pickup">—</div><div class="report-card-note">Prontas para entrega</div></article></div>
+  <div class="report-grid" data-financial-cards><article class="report-card"><div class="report-card-label">Orçamentos aprovados</div><div class="report-card-value" data-report="approved">—</div><div class="report-card-note" data-report-note="approved">Dados financeiros</div></article><article class="report-card"><div class="report-card-label">Valor recebido</div><div class="report-card-value" data-report="received">—</div><div class="report-card-note">Pagamentos confirmados</div></article><article class="report-card"><div class="report-card-label">Saldo pendente</div><div class="report-card-value" data-report="balance">—</div><div class="report-card-note">Valores a receber</div></article></div>
+  <div class="dashboard-grid"><section class="panel"><div class="panel-header"><div><h2 class="panel-title">Ordens por situação</h2><p class="panel-subtitle">Distribuição atual do fluxo</p></div></div><div class="panel-body" data-report-status><div class="page-loading"><span class="spinner" role="status" aria-label="Carregando"></span></div></div></section><section class="panel"><div class="panel-header"><div><h2 class="panel-title">Serviços concluídos</h2><p class="panel-subtitle">Desempenho por técnico</p></div></div><div class="table-wrap" data-report-technicians><div class="page-loading"><span class="spinner" role="status" aria-label="Carregando"></span></div></div></section></div>
+</div></section></main>
+    </div>
+  </div><div class="toast-stack" id="toast-stack"></div></div>
+</body>
+</html>
+
+
+
+
+
+
