@@ -1,130 +1,57 @@
 # ServiceFlow
 
-Plataforma web para gestão de ordens de serviço em assistências técnicas e empresas de manutenção. O ServiceFlow organiza o atendimento completo de um equipamento — do recebimento à entrega — em um único fluxo, com controle de responsabilidades, orçamento, autorização, execução, pagamento e histórico.
+[English](README.md) · [Português](README.pt-BR.md)
 
-## Para que serve
+A web application for **service order management** in repair shops and maintenance businesses. ServiceFlow tracks equipment from intake to delivery, keeping assignments, estimates, approvals, repairs, payments, and history in one workflow.
 
-O sistema foi criado para substituir controles espalhados em planilhas, mensagens e anotações. Cada atendimento recebe uma ordem de serviço única, que concentra:
+## What it solves
 
-- dados do cliente e do equipamento;
-- defeito relatado e condições de entrada;
-- técnico responsável, prioridade e prazo;
-- diagnóstico, atividades, peças utilizadas e testes;
-- orçamentos versionados e decisão do cliente;
-- pagamentos, saldo pendente, estornos e cancelamentos;
-- anexos, comprovantes, retornos e histórico de alterações.
+Repair operations often spread customer information, deadlines, and approvals across spreadsheets and messages. ServiceFlow brings these records together in a single service order and applies business rules to critical actions.
 
-O backend aplica as regras do negócio e impede operações críticas fora da sequência permitida — por exemplo, iniciar um reparo sem aprovação válida do orçamento ou entregar uma ordem com saldo pendente sem uma exceção autorizada.
+## Core workflow
 
-## Aplicação no mercado
+1. Register the customer and equipment, then open a service order.
+2. Assign a technician.
+3. Record the diagnosis and prepare a versioned estimate.
+4. Record the customer's decision for the exact estimate version.
+5. Start the repair after valid approval.
+6. Record activities, parts, and tests.
+7. Record payment and equipment delivery.
+8. Create a linked return order when needed, preserving the original history.
 
-O produto atende principalmente:
+## Main modules
 
-- assistências técnicas de celulares, computadores, eletroeletrônicos e outros equipamentos;
-- oficinas de manutenção e reparo;
-- empresas que recebem equipamentos de clientes e precisam acompanhar serviços, prazos e pagamentos;
-- operações que desejam sair de planilhas e centralizar o atendimento em uma ferramenta própria.
-
-Na prática, o ServiceFlow ajuda a empresa a reduzir extravios de informação, evitar reparos sem autorização, dar visibilidade aos prazos, separar o status operacional do financeiro e preservar evidências para resolver dúvidas sobre danos, valores, alterações e entregas.
-
-O modelo atual é adequado como MVP para uma assistência técnica. Ele também pode servir como base para uma solução comercial multiunidade ou SaaS, após a implementação de isolamento entre empresas, rotinas de backup, monitoramento, notificações e integrações externas conforme a estratégia do produto.
-
-## Fluxo de atendimento
-
-1. O atendente cadastra o cliente, o equipamento e abre a ordem de serviço.
-2. O gerente atribui a ordem a um técnico.
-3. O técnico registra o diagnóstico e prepara o orçamento.
-4. O atendente registra a aprovação, recusa ou expiração da versão enviada.
-5. O reparo só pode ser iniciado quando existe aprovação válida.
-6. O técnico registra atividades, peças e testes.
-7. O atendente registra o pagamento e a entrega do equipamento.
-8. Se necessário, a empresa abre um retorno vinculado à ordem original, mantendo o histórico do atendimento.
-
-## Módulos
-
-| Módulo | Aplicação |
+| Module | Purpose |
 | --- | --- |
-| Painel | Visão geral de ordens abertas, atrasadas, aguardando aprovação e prontas para entrega. |
-| Clientes | Cadastro, pesquisa e consulta do histórico de atendimentos. |
-| Equipamentos | Identificação do equipamento e vínculo com seu proprietário e ordens anteriores. |
-| Ordens de serviço | Recebimento, atribuição, prazos, diagnóstico, execução, testes, anexos, retornos e entrega. |
-| Orçamentos | Itens, valores, versões, validade e decisão do cliente. |
-| Financeiro | Pagamentos, situação financeira, saldo pendente, estornos e cancelamentos. |
-| Relatórios | Indicadores operacionais e financeiros para acompanhamento da gestão. |
-| Usuários | Controle de acesso, perfis e ativação de funcionários. |
-| Auditoria | Registro das alterações, responsáveis e dados relevantes da ordem. |
+| Dashboard | Overview of open, overdue, pending approval, and ready orders. |
+| Customers and equipment | Registration and service history. |
+| Service orders | Intake, assignments, deadlines, diagnosis, repairs, tests, attachments, returns, and delivery. |
+| Estimates | Items, amounts, versions, validity, and customer decisions. |
+| Finance | Payments, outstanding balances, refunds, and cancellations. |
+| Reports | Operational and financial indicators. |
+| Users and audit | Role permissions and change history. |
 
-## Perfis de acesso
+## Business controls
 
-| Perfil | Responsabilidades principais |
-| --- | --- |
-| Gerente | Gerencia usuários, distribui ordens, consulta relatórios, autoriza exceções e estornos. |
-| Atendente | Cadastra clientes, recebe equipamentos, registra decisões, pagamentos e entregas. |
-| Técnico | Registra diagnóstico, orçamento, atividades, peças e testes nas ordens atribuídas. |
+- Unique, immutable service order numbers.
+- Estimate approvals tied to a specific version.
+- Controlled status transitions and backend monetary validation.
+- Separate operational and financial status.
+- Refunds limited to the amount actually paid.
+- Delivery requires settlement unless a manager authorizes an exception.
+- History preservation and access checks for managers, attendants, and technicians.
 
-As permissões são verificadas no backend, além dos controles apresentados na interface.
+## Technology and architecture
 
-## Destaques de controle
+- **Backend:** Python, Django, and Django REST Framework.
+- **Frontend:** HTML, CSS, and modular JavaScript.
+- **Database:** SQLite for development; PostgreSQL through `DATABASE_URL`.
+- **Authentication:** Django sessions with CSRF protection.
+- **Architecture:** frontend and API served by the same Django project; transactional services centralize critical business operations.
 
-- Número de ordem único e imutável.
-- Orçamentos preservados por versão, com aprovação vinculada à versão exata.
-- Transições de status controladas por regras de negócio.
-- Valores monetários calculados e validados no backend.
-- Situação operacional independente da situação financeira.
-- Estornos limitados ao valor efetivamente pago.
-- Entrega condicionada à quitação, salvo exceção autorizada pelo gerente.
-- Histórico de alterações preservado sem apagar o atendimento.
-- Controle de acesso por perfil e, quando aplicável, por técnico responsável pela ordem.
-- Paginação e filtros nas listagens da interface.
+## Local setup
 
-## Arquitetura e tecnologias
-
-O projeto usa uma arquitetura web monolítica, com frontend e API servidos pelo mesmo projeto Django:
-
-- **Backend:** Python, Django e Django REST Framework.
-- **Frontend:** HTML, CSS e JavaScript modular por tela.
-- **Banco de dados:** SQLite por padrão no desenvolvimento e PostgreSQL via `DATABASE_URL`.
-- **Autenticação:** sessão do Django, com proteção CSRF.
-- **Arquivos:** anexos vinculados às ordens e protegidos por autenticação.
-- **Testes:** suíte de testes do Django para modelos, serializers e serviços.
-
-### Estrutura principal
-
-```text
-.
-├── backend/
-│   ├── apps/
-│   │   ├── auditoria/
-│   │   ├── clientes/
-│   │   ├── equipamentos/
-│   │   ├── financeiro/
-│   │   ├── ordens/
-│   │   ├── orcamentos/
-│   │   ├── relatorios/
-│   │   └── usuarios/
-│   ├── config/
-│   ├── tests/
-│   ├── manage.py
-│   └── requirements.txt
-├── frontend/
-│   └── static/screens/
-└── docs/
-    └── tech_spec
-```
-
-As operações críticas ficam em serviços transacionais no backend. Isso concentra as regras em um único lugar e mantém a API e a interface alinhadas ao fluxo operacional.
-
-## Como executar localmente
-
-### Pré-requisitos
-
-- Python 3.11 ou superior recomendado;
-- `pip`;
-- PostgreSQL opcional — o desenvolvimento pode usar SQLite.
-
-### Instalação
-
-No PowerShell:
+Python 3.11 or newer is recommended. From the repository root, in PowerShell:
 
 ```powershell
 cd backend
@@ -133,87 +60,42 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 python manage.py migrate
 python manage.py check
-```
-
-Crie o primeiro usuário gerente:
-
-```powershell
 python manage.py createsuperuser
-```
-
-Inicie o servidor:
-
-```powershell
 python manage.py runserver
 ```
 
-Depois, acesse [http://localhost:8000/](http://localhost:8000/). A aplicação redireciona para a tela de login. O painel administrativo fica disponível em `/admin/`.
+Open [http://localhost:8000/](http://localhost:8000/) and sign in. Django Admin is available at `/admin/`.
 
-### Variáveis de ambiente
+On Linux or macOS, use `python3 -m venv .venv` and `source .venv/bin/activate` for the environment setup.
 
-| Variável | Finalidade |
+## Configuration
+
+| Variable | Purpose |
 | --- | --- |
-| `DJANGO_SECRET_KEY` | Chave secreta da aplicação. Deve ser definida em ambientes reais. |
-| `DJANGO_DEBUG` | Define o modo de debug; use `0` em produção. |
-| `DJANGO_ALLOWED_HOSTS` | Hosts permitidos, separados por vírgula. |
-| `DATABASE_URL` | Conexão PostgreSQL no formato `postgresql://usuario:senha@host:5432/banco`. |
+| `DJANGO_SECRET_KEY` | Application secret; configure a secure value for real deployments. |
+| `DJANGO_DEBUG` | Debug mode; use `0` in production. |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts. |
+| `DATABASE_URL` | PostgreSQL connection URL. |
 
-Exemplo:
+## API and tests
 
-```powershell
-$env:DJANGO_DEBUG = "0"
-$env:DJANGO_ALLOWED_HOSTS = "app.exemplo.com"
-$env:DJANGO_SECRET_KEY = "substitua-por-uma-chave-segura"
-$env:DATABASE_URL = "postgresql://usuario:senha@localhost:5432/serviceflow"
-```
+The API is under `/api/` and uses session authentication. Resources cover customers, equipment, orders, estimates, payments, deliveries, and reports. Endpoint identifiers remain in Portuguese.
 
-## API principal
-
-A API fica sob `/api/` e usa autenticação por sessão. Alguns endpoints disponíveis são:
-
-| Método | Rota | Finalidade |
-| --- | --- | --- |
-| `GET`, `POST` | `/api/clientes/` | Listar e cadastrar clientes. |
-| `GET`, `POST` | `/api/equipamentos/` | Listar e cadastrar equipamentos. |
-| `GET`, `POST` | `/api/ordens/` | Consultar e abrir ordens de serviço. |
-| `POST` | `/api/ordens/{id}/diagnostico/` | Registrar diagnóstico. |
-| `POST` | `/api/ordens/{id}/iniciar-reparo/` | Iniciar reparo após validação das regras. |
-| `POST` | `/api/ordens/{id}/orcamentos/` | Criar uma versão de orçamento. |
-| `POST` | `/api/orcamentos/{id}/decisao/` | Registrar aprovação ou recusa. |
-| `POST` | `/api/ordens/{id}/pagamentos/` | Registrar pagamento. |
-| `POST` | `/api/ordens/{id}/entrega/` | Registrar entrega e recebedor. |
-| `GET` | `/api/relatorios/operacional/` | Consultar indicadores operacionais. |
-| `GET` | `/api/relatorios/financeiro/` | Consultar indicadores financeiros. |
-
-As demais rotas estão organizadas nos arquivos `urls.py` de cada aplicação.
-
-## Testes
-
-Execute a suíte do backend com:
+Run backend tests from `backend/`:
 
 ```powershell
-cd backend
 python manage.py test
 ```
 
-Os testes cobrem, entre outros cenários, o fluxo até a entrega, bloqueio de reparo sem aprovação, permissões por perfil, estornos, entrega com saldo pendente, cancelamento com preservação de histórico e validações de integridade dos modelos.
+## Current scope
 
-## Escopo atual e próximos passos
+The MVP covers internal repair operations. Customer communication uses the business's existing channels; the application records decisions and evidence.
 
-O MVP já contempla o núcleo interno da operação. A comunicação com o cliente, no escopo atual, continua sendo feita pelos canais já utilizados pela empresa; o sistema registra a decisão e suas evidências.
+Commercial expansion requires additional work such as company-level data isolation, automated backups, production hosting, monitoring, notifications, customer portals, and external integrations.
 
-Para uma implantação comercial em escala, recomenda-se complementar o produto com:
+## Documentation
 
-- isolamento de dados por empresa ou unidade;
-- backups automatizados e testes de restauração;
-- HTTPS, servidor de aplicação e proxy reverso;
-- monitoramento, logs e alertas;
-- notificações por e-mail ou WhatsApp;
-- portal do cliente e integrações de pagamento;
-- estoque de peças, emissão fiscal e integrações contábeis, se necessários.
-
-## Documentação complementar
-
-- [Especificação técnica](docs/tech_spec)
-- [Documentação do backend](backend/README.md)
-- [Documentação do frontend](frontend/README.md)
+- [Complete project reference in Portuguese](README.pt-BR.md)
+- [Technical specification](docs/tech_spec)
+- [Backend documentation](backend/README.md)
+- [Frontend documentation](frontend/README.md)
