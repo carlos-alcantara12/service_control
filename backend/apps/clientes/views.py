@@ -37,7 +37,7 @@ class ClientePermissionMixin:
         return queryset
 
 
-class ClienteViewSet(ClientePermissionMixin, viewsets.ModelViewSet):
+class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
     http_method_names = ["get", "post", "patch", "head", "options"]

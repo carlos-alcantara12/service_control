@@ -15,7 +15,7 @@ from apps.usuarios.drf_permissions import IsGerente
 from .serializers import RelatorioFinanceiroSerializer, RelatorioOperacionalSerializer
 
 
-class RelatorioViewSet(viewsets.GenericViewSet):
+class RelatorioViewSet(viewsets.ModelViewSet):
     permission_classes = [IsGerente]
     http_method_names = ["get", "head", "options"]
 

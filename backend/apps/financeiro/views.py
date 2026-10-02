@@ -6,19 +6,12 @@ from apps.usuarios.drf_permissions import IsUsuarioAtivo
 from apps.usuarios.models import PerfilUsuario
 
 from .models import Pagamento
-from .serializers import EstornoCreateSerializer, EstornoSerializer
+from .serializers import EstornoCreateSerializer, EstornoSerializer, PagamentoSerializer
 
 
-class PagamentoViewSet(viewsets.GenericViewSet):
-    permission_classes = [IsUsuarioAtivo]
-    queryset = Pagamento.objects.select_related("ordem", "ordem__tecnico")
-    http_method_names = ["get", "post", "head", "options"]
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        if getattr(self.request.user, "perfil", None) == PerfilUsuario.TECNICO:
-            queryset = queryset.filter(ordem__tecnico=self.request.user)
-        return queryset
+class PagamentoViewSet(viewsets.ModelViewSet):
+    queryset = Pagamento.objects.all()
+    serializer_class = PagamentoSerializer
 
     @action(detail=True, methods=["post"])
     def estornos(self, request, *args, **kwargs):
