@@ -1,0 +1,171 @@
+/* Shared motion layer: Animate.css + lightweight interaction polish. */
+:root {
+  --motion-ease: cubic-bezier(.22, .75, .25, 1);
+  --motion-duration: .65s;
+}
+
+/* Microinteractions */
+.button,
+.icon-button,
+.mobile-menu,
+.sidebar-user-menu,
+.close-button,
+.nav-link,
+.panel-link,
+.row-action {
+  transition:
+    transform .2s var(--motion-ease),
+    color .2s ease,
+    background-color .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+@media (hover: hover) {
+  .button:hover:not(:disabled),
+  .icon-button:hover,
+  .mobile-menu:hover,
+  .sidebar-user-menu:hover,
+  .close-button:hover,
+  .panel-link:hover,
+  .row-action:hover {
+    transform: translateY(-2px);
+  }
+
+  .button-primary:hover:not(:disabled) {
+    box-shadow: 0 7px 16px rgba(64, 93, 120, .2);
+  }
+
+  .icon-button:hover,
+  .mobile-menu:hover,
+  .close-button:hover {
+    box-shadow: 0 4px 12px rgba(35, 42, 49, .08);
+  }
+
+  .nav-link:hover {
+    transform: translateX(3px);
+  }
+}
+
+.button:active:not(:disabled),
+.icon-button:active,
+.mobile-menu:active,
+.sidebar-user-menu:active,
+.close-button:active,
+.panel-link:active,
+.row-action:active {
+  transform: translateY(1px) scale(.98);
+}
+
+.button:focus-visible,
+.icon-button:focus-visible,
+.mobile-menu:focus-visible,
+.sidebar-user-menu:focus-visible,
+.close-button:focus-visible,
+.nav-link:focus-visible,
+.panel-link:focus-visible,
+.row-action:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(64, 93, 120, .28);
+  outline-offset: 2px;
+}
+
+/* Scroll reveals. The pending state is only applied by motion.js, so a
+   disabled script never hides content from users. */
+.motion-pending {
+  opacity: 0;
+}
+
+.motion-visible {
+  opacity: 1;
+}
+
+.motion-reveal {
+  --animate-duration: var(--motion-duration);
+  --animate-timing-function: var(--motion-ease);
+}
+
+.motion-reveal.animate__animated {
+  animation-duration: var(--animate-duration);
+  animation-timing-function: var(--animate-timing-function);
+  animation-fill-mode: both;
+}
+
+/* Local fallback for environments where the CDN stylesheet is unavailable. */
+.motion-reveal.animate__animated.animate__fadeIn {
+  animation-name: motion-fade-in;
+}
+
+.motion-reveal.animate__animated.animate__fadeInUp {
+  animation-name: motion-fade-in-up;
+}
+
+@keyframes motion-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes motion-fade-in-up {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* Parallax is intentionally subtle so it adds depth without moving content
+   away from the user's reading position. */
+.motion-parallax {
+  transform: translate3d(0, var(--motion-parallax-y, 0px), 0);
+  will-change: transform;
+}
+
+.login-brand.motion-parallax::after {
+  transform: translate3d(0, var(--motion-parallax-decoration-y, 0px), 0);
+}
+
+.modal-backdrop {
+  animation: motion-backdrop-in .2s ease-out both;
+}
+
+.modal-backdrop .modal {
+  animation: motion-modal-in .28s var(--motion-ease) both;
+}
+
+@keyframes motion-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes motion-modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-pending { opacity: 1; }
+
+  .motion-parallax {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .login-brand.motion-parallax::after { transform: none !important; }
+
+  .motion-reveal.animate__animated,
+  .modal-backdrop,
+  .modal-backdrop .modal {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .button,
+  .icon-button,
+  .mobile-menu,
+  .sidebar-user-menu,
+  .close-button,
+  .nav-link,
+  .panel-link,
+  .row-action {
+    transition-duration: .01ms !important;
+  }
+}

@@ -37,7 +37,11 @@ const icons = {
   dollar: '<circle cx="12" cy="12" r="9"/><path d="M15 8.5c-.7-.6-1.7-1-3-1-1.7 0-3 .8-3 2s1.2 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.4-3-1M12 5v14"/>',
 };
 
-export const API_BASE = window.SERVICEFLOW_API_BASE || "http://127.0.0.1:8000/api";
+const localApiHost = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+  ? window.location.hostname
+  : "127.0.0.1";
+export const API_BASE = window.SERVICEFLOW_API_BASE || `http://${localApiHost}:8000/api`;
+const API_ORIGIN = new URL(API_BASE, window.location.href).origin;
 export function icon(name, className = "") { return `<span class="icon ${className}" aria-hidden="true"><svg viewBox="0 0 24 24">${icons[name] || icons.info}</svg></span>`; }
 export function readUser() { try { return JSON.parse(localStorage.getItem(storageKey) || "null"); } catch (_) { return null; } }
 export function saveUser(user) { state.user = user; localStorage.setItem(storageKey, JSON.stringify(user)); }
@@ -56,7 +60,7 @@ export function loadingMarkup() { return `<div class="page-loading"><span class=
 export function emptyMarkup(message, action = "") { return `<div class="empty-state"><span class="icon-wrap">${icon("info")}</span><p>${escapeHtml(message)}</p>${action ? `<div style="margin-top:14px">${action}</div>` : ""}</div>`; }
 
 function getCookie(name) { const prefix = `${name}=`; const part = document.cookie.split(";").map((item) => item.trim()).find((item) => item.startsWith(prefix)); return part ? decodeURIComponent(part.slice(prefix.length)) : ""; }
-async function ensureCsrf() { if (!getCookie("csrftoken")) await fetch("/admin/login/", { credentials: "include" }); }
+async function ensureCsrf() { if (!getCookie("csrftoken")) await fetch(`${API_ORIGIN}/admin/login/`, { credentials: "include" }); }
 export class ApiError extends Error { constructor(message, status) { super(message); this.status = status; } }
 export async function api(path, options = {}) {
   const method = String(options.method || "GET").toUpperCase();
